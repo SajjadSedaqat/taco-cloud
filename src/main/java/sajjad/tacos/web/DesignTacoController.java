@@ -1,6 +1,7 @@
 package sajjad.tacos.web;
 
 
+import org.springframework.validation.Errors;
 import sajjad.tacos.Ingredient;
 import sajjad.tacos.Taco;
 import sajjad.tacos.TacoOrder;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import sajjad.tacos.Ingredient.Type;
+
+import javax.validation.Valid;
 
 
 @Slf4j
@@ -61,8 +64,11 @@ public class DesignTacoController {
     }
 
     @PostMapping
-    public String processTaco(Taco taco,
+    public String processTaco(@Valid Taco taco, Errors errors,
                               @ModelAttribute TacoOrder tacoOrder) {
+        if (errors.hasErrors()) {
+            return "design";
+        }
         tacoOrder.addTaco(taco);
         log.info("Processing taco: {}", taco);
         return "redirect:/orders/current";
