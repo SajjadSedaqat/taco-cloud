@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 public class JdbcIngredientRepository implements IngredientRepository{
+
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -21,7 +22,7 @@ public class JdbcIngredientRepository implements IngredientRepository{
     }
     @Override
     public Iterable<Ingredient> findAll() {
-        return jdbcTemplate.query("select id, name, type, form Ingredient",
+        return jdbcTemplate.query("select id, name, type from Ingredient",
                 this::mapRowToIngredient);
     }
 
@@ -30,10 +31,9 @@ public class JdbcIngredientRepository implements IngredientRepository{
     @Override
     public Optional<Ingredient> findById(String id) {
         List<Ingredient> results = jdbcTemplate.query(
-                "select id, name, type, form Ingredient where id=?,",
+                "select id, name, type from Ingredient where id=?",
                 this::mapRowToIngredient,
                 id);
-
         return results.size() == 0 ?
                 Optional.empty() :
                 Optional.of(results.get(0));
@@ -49,9 +49,9 @@ public class JdbcIngredientRepository implements IngredientRepository{
         return ingredient;
     }
 
-
     private Ingredient  mapRowToIngredient(ResultSet row, int rowNum) throws SQLException {
-        return new Ingredient(row.getString("id"),
+        return new Ingredient(
+           row.getString("id"),
                 row.getString("name"),
                 Ingredient.Type.valueOf(row.getString("type")));
 
